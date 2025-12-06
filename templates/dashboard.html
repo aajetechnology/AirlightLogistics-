@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Dashboard - Student Safe Travel</title>
+    <style>
+        body {font-family:Arial; margin:0; background:#f8f9fa;}
+        .header {background:#0066ff; color:white; padding:25px; text-align:center;}
+        .card {background:white; margin:20px; padding:20px; border-radius:15px; box-shadow:0 4px 15px rgba(0,0,0,0.1);}
+        .btn {background:#0066ff; color:white; padding:12px 25px; border:none; border-radius:10px; margin:5px; cursor:pointer;}
+        .cancel {background:#ff3333;}
+        .green {color:green; font-weight:bold;}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>STUDENT SAFE TRAVEL</h1>
+    <p>Welcome, <strong>{{ user.get_full_name }}</strong> 
+    {% if user.student %}(Student - {{ user.student.matric_number }}){% endif %}</p>
+</div>
+
+<div class="card">
+    <h2>Upcoming Trips</h2>
+    {% for booking in upcoming_bookings %}
+    <div style="border:1px solid #0066ff; padding:15px; margin:10px 0; border-radius:10px;">
+        <p><strong>{{ booking.trip.destination|upper }}</strong> — {{ booking.trip.departure_date|date:"D, d M Y h:i A" }}</p>
+        <p>Code: <strong>{{ booking.booking_code }}</strong> | Paid: ₦{{ booking.amount_paid }}</p>
+        <p>Status: {% if booking.is_boarded %}BOARDED{% else %}Confirmed{% endif %}</p>
+        <a href="{% url 'ticket_detail' booking.id %}" class="btn">View Ticket</a>
+        {% if not booking.is_boarded %}
+        <a href="{% url 'cancel_booking' booking.id %}" class="btn cancel" onclick="return confirm('Cancel this booking?')">Cancel Booking</a>
+        {% endif %}
+    </div>
+    {% empty %}
+    <p>No upcoming trips. <a href="{% url 'trip_list' %}">Book now!</a></p>
+    {% endfor %}
+</div>
+
+{% if user.student %}
+<div class="card">
+    <h2>Referral Rewards</h2>
+    <p>Your Referral Link: <strong>https://yoursite.com/?ref={{ user.student.referral_code }}</strong></p>
+    <p>Students Referred: <strong>{{ user.student.referral_count }}</strong></p>
+    <p class="green">FREE TRIPS EARNED: {{ user.student.free_trips }}</p>
+</div>
+{% endif %}
+
+<div class="card">
+    <h2>Account</h2>
+    <p>Email: {{ user.email }}</p>
+    <p>Phone: {{ user.student.phone|default:user.regularpassenger.phone }}</p>
+    <a href="{% url 'logout' %}" class="btn cancel">Logout</a>
+</div>
+
+<a href="{% url 'trip_list' %}" style="display:block; margin:20px; text-align:center; font-size:20px;">
+    BOOK NEW TRIP
+</a>
+</body>
+</html>

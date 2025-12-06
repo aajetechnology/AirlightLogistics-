@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Driver Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {font-family:Arial; margin:0; background:#1a1a1a; color:white;}
+        .header {background:#0066ff; padding:20px; text-align:center;}
+        .card {background:#333; margin:20px; padding:20px; border-radius:15px;}
+        .btn {background:#00ff00; color:black; padding:15px; border:none; border-radius:10px; width:100%; font-size:20px;}
+        .redbtn {background:#ff0000;}
+        .status {font-size:24px; margin:20px 0;}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>DRIVER DASHBOARD</h1>
+    <p>Driver: {{ user.get_full_name }} ({{ user.driver.driver_id }})</p>
+</div>
+
+<div class="card">
+    <h2>Today's Trip</h2>
+    {% if active_trip %}
+        <p><strong>{{ active_trip.trip.destination|upper }}</strong></p>
+        <p>Departure: {{ active_trip.trip.departure_date|date:"d M Y h:i A" }}</p>
+        <p>Passengers: {{ active_trip.trip.passengers_boarded }}/{{ active_trip.trip.bus_capacity }}</p>
+        
+        <div class="status" id="status">GPS ACTIVE — SENDING LOCATION</div>
+        <button class="btn redbtn" onclick="stopTrip()">END TRIP</button>
+    {% else %}
+        <p>No active trip</p>
+    {% endif %}
+</div>
+
+<script>
+let interval;
+function startGPS() {
+    if (navigator.geolocation) {
+        interval = setInterval(() => {
+            navigator.geolocation.getCurrentPosition(pos => {
+                fetch('/api/driver-location/', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        lat: pos.coords.latitude,
+                        lng: pos.coords.longitude,
+                        trip_id: {{ active_trip.trip.id|default:0 }}
+                    })
+                });
+            });
+        }, 10000); // every 10 seconds
+    }
+}
+function stopTrip() {
+    clearInterval(interval);
+    document.getElementById('status').innerHTML = "TRIP ENDED";
+}
+window.onload = startGPS;
+</script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!-- templates/dashboard_passenger.html -->
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Dashboard - Student Safe Travel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {font-family: Arial; margin:0; background:#f8f9fa;}
+        .header {background:#0066ff; color:white; padding:20px; text-align:center;}
+        .card {background:white; margin:15px; padding:20px; border-radius:15px; box-shadow:0 4px 10px rgba(0,0,0,0.1);}
+        .btn {background:#0066ff; color:white; padding:15px; border:none; border-radius:10px; width:100%; font-size:18px; margin:10px 0;}
+        .green {color:green; font-weight:bold;}
+        .red {color:red; font-weight:bold;}
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>🚍 STUDENT SAFE TRAVEL</h1>
+    <p>Welcome, {{ user.get_full_name }} ({{ user.student.matric_number }})</p>
+</div>
+
+<div class="card">
+    <h2>🎫 My Upcoming Trips</h2>
+    {% for booking in upcoming_bookings %}
+        <div style="border:1px solid #0066ff; padding:15px; margin:10px 0; border-radius:10px;">
+            <p><strong>{{ booking.trip.destination|upper }}</strong></p>
+            <p>{{ booking.trip.departure_date|date:"D, d M Y - h:i A" }}</p>
+            <p>Status: {% if booking.is_boarded %}<span class="green">BOARDED ✓</span>{% else %}<span class="red">NOT BOARDED</span>{% endif %}</p>
+            <a href="{% url 'ticket_detail' booking.id %}" class="btn">VIEW QR TICKET</a>
+        </div>
+    {% empty %}
+        <p>No upcoming trips. <a href="{% url 'trip_list' %}">Book now!</a></p>
+    {% endfor %}
+</div>
+
+<div class="card">
+    <h2>🔗 My Referral Link</h2>
+    <p>Share this → <strong>https://yoursite.com/?ref={{ user.student.referral_code }}</strong></p>
+    <p>Referred: <strong>{{ user.student.referral_count }}</strong> students</p>
+    <p class="green">FREE TRIPS EARNED: {{ user.student.free_trips }}</p>
+</div>
+
+<div class="card">
+    <h2>📍 Suggest New Destination</h2>
+    <p>Feature coming soon! Email us at support@studentsafetravel.ng</p>
+</div>
+
+<div class="card">
+    <h2>🆘 Emergency Safety</h2>
+    <p>During your trip, your location will be shared for safety.</p>
+    <button class="btn" style="background:red;" onclick="alert('SOS sent to control room!')">EMERGENCY SOS</button>
+</div>
+
+<a href="{% url 'trip_list' %}" class="btn">BOOK NEW TRIP</a>
+<a href="{% url 'logout' %}" style="display:block; margin:20px; color:red;">Logout</a>
+</body>
+</html>

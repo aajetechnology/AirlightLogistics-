@@ -1,0 +1,31 @@
+<!-- templates/trips.html -->
+<!DOCTYPE html>
+<html>
+<head><title>Available Trips - Student Safe Travel</title></head>
+<body style="font-family:Arial; margin:40px; background:#f8f9fa;">
+<h1 style="color:#0066ff; text-align:center;">🚍 AVAILABLE TRIPS FROM FUT MINNA</h1>
+{% for trip in trips %}
+<div style="border:2px solid #0066ff; padding:20px; margin:20px 0; border-radius:15px; background:white;">
+    <h2>➡️ {{ trip.destination|upper }}</h2>
+    <p><strong>Date & Time:</strong> {{ trip.departure_date|date:"D, d M Y - h:i A" }}</p>
+    <p><strong>Bus Capacity:</strong> {{ trip.passengers_boarded }} / {{ trip.bus_capacity }} seats taken</p>
+    <p><strong>Driver:</strong> {{ trip.driver }} ({{ trip.driver.driver_id }})</p>
+    
+    {% if user.is_authenticated %}
+        {% if user.student %}
+            <h3>🎓 Student Price: ₦{{ trip.price_student }}</h3>
+        {% else %}
+            <h3>💼 Regular Price: ₦{{ trip.price_regular }}</h3>
+        {% endif %}
+        <a href="{% url 'book_trip' trip.id %}" style="background:#0066ff; color:white; padding:15px 30px; text-decoration:none; border-radius:10px; font-size:18px;">
+            BOOK SEAT NOW
+        </a>
+    {% else %}
+        <p><a href="/register/student/">Register as Student</a> or <a href="/register/regular/">Regular Passenger</a> to book</p>
+    {% endif %}
+</div>
+{% empty %}
+<h3 style="text-align:center; color:gray;">No trips yet. First trip coming soon!</h3>
+{% endfor %}
+</body>
+</html>

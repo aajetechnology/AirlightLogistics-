@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Register as Student - Student Safe Travel</title>
+    <style>
+        body {font-family:Arial; text-align:center; margin-top:50px; background:#f0f8ff;}
+        .box {width:420px; margin:0 auto; padding:40px; background:white; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.2);}
+        input, select {width:100%; padding:15px; margin:10px 0; font-size:18px; border:1px solid #ccc; border-radius:10px;}
+        button {width:100%; padding:15px; background:#0066ff; color:white; border:none; border-radius:10px; font-size:20px; cursor:pointer;}
+        button:hover {background:#0050cc;}
+        .error {color:red; font-size:14px;}
+        .success {color:green; font-weight:bold;}
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>REGISTER AS STUDENT</h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <p class="success">{{ message }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %} <!-- THIS LINE FIXES THE 403 CSRF ERROR -->
+        
+        {{ form.non_field_errors }}
+
+        <input type="text" name="first_name" placeholder="First Name" required>
+        {{ form.first_name.errors }}
+
+        <input type="text" name="last_name" placeholder="Last Name" required>
+        {{ form.last_name.errors }}
+
+        <input type="email" name="email" placeholder="School Email (e.g. john@futminna.edu.ng)" required>
+        {{ form.email.errors }}
+
+        <input type="text" name="phone" placeholder="Phone Number (08012345678)" required>
+        {{ form.phone.errors }}
+
+        <input type="text" name="matric_number" placeholder="Matric Number (e.g. 2020/1C1234)" required>
+        {{ form.matric_number.errors }}
+
+        <input type="password" name="password" placeholder="Password" required>
+        {{ form.password.errors }}
+
+        <input type="text" name="referral_code" placeholder="Referral Code (optional)">
+
+        <button type="submit">CREATE STUDENT ACCOUNT</button>
+    </form>
+
+    <p style="margin-top:20px;">
+        Already have account? <a href="/">Login here</a>
+    </p>
+</div>
+</body>
+</html>

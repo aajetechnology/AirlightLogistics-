@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head><title>Your Ticket</title></head>
+<body style="text-align:center; margin-top:50px;">
+    <h1>🎫 YOUR TICKET IS READY!</h1>
+    <h2>{{ booking.trip.destination }} • {{ booking.trip.departure_date|date:"d M Y h:i A" }}</h2>
+    <p><strong>Name:</strong> {{ request.user.get_full_name }}</p>
+    <p><strong>Ticket Code:</strong> <code style="font-size:24px;">{{ booking.booking_code }}</code></p>
+    <p><strong>Amount Paid:</strong> ₦{{ booking.amount_paid }}</p>
+    
+    <h3>Show this QR to driver:</h3>
+    <img src="/media/{{ booking.qr_code }}" style="width:300px; height:300px; border:2px solid #0066ff;">
+    
+    <p><a href="/">Back Home</a> | <a href="{% url 'trip_list' %}">See All Trips</a></p>
+</body>
+</html>
